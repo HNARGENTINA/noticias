@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HackerNews.com.ar — Ciberinteligencia sin ruido</title>
+<meta name="description" content="Noticias, vulnerabilidades e investigaciones sobre amenazas en español, con fuentes verificables.">
+<style>
+:root{color-scheme:dark;--bg:#07111F;--s1:#0b1b2e;--s2:#10263d;--line:#1d3a58;--tx:#D6E5F2;--mut:#8aa3ba;--bl:#087EBA;--ac:#49D9FF;--am:#ffb02e;--rd:#ff5a6a;--vi:#b39dff;
+--mono:ui-monospace,Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--disp:"Arial Narrow","Helvetica Neue",Arial,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 var(--sans);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(900px 500px at 85% -10%,#087EBA33,transparent 60%),linear-gradient(#49D9FF0a 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,#49D9FF0a 1px,transparent 1px) 0 0/48px 48px}
+a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}.mono{font-family:var(--mono)}
+header{position:sticky;top:0;z-index:9;background:#07111Ff2;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{display:flex;align-items:center;gap:16px;min-height:58px;flex-wrap:wrap}
+.logo{font:800 18px var(--mono);color:var(--ac);white-space:nowrap}.logo i{color:var(--mut);font-style:normal}
+nav{display:flex;gap:4px;margin-left:auto}
+nav a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:8px;font:13px var(--mono);color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}
+nav a:hover{color:var(--tx);background:#49D9FF12}nav a[aria-current]{color:var(--ac);border-bottom-color:var(--ac);background:#49D9FF14}
+@media(max-width:720px){.bar{gap:0;padding-top:6px}nav{margin:0;width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding-bottom:4px}nav a{padding:0 2px;font-size:12px}}
+.panel{background:linear-gradient(160deg,#49D9FF0d,#49D9FF03);border:1px solid var(--line);border-radius:12px;position:relative}
+.panel::before{content:"";position:absolute;left:-1px;top:14px;width:3px;height:26px;background:var(--ac);border-radius:2px}
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:center;padding:48px 0 24px}
+.kick{font:700 12px var(--mono);letter-spacing:.18em;color:var(--ac)}
+.hero h1{font:900 clamp(42px,8vw,92px)/.95 var(--disp);letter-spacing:-.02em;margin:16px 0;text-transform:uppercase}.hero h1 em{font-style:normal;color:var(--ac)}
+.lead{color:#b9cde0;max-width:56ch;font-size:18px}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid var(--ac);border-radius:8px;font:700 13px var(--mono);color:var(--ac)}.btn.fill{background:var(--ac);color:#04121f}.btn:hover{box-shadow:0 0 24px #49D9FF44}
+h2.sec{font:900 clamp(24px,4vw,36px)/1 var(--disp);text-transform:uppercase;margin:44px 0 6px}h2.sec+p{color:var(--mut);margin:0 0 18px;font:13px var(--mono)}
+.card{display:block;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:18px;transition:.2s}a.card:hover{border-color:var(--ac);transform:translateY(-2px)}
+.card h3{font-size:18px;line-height:1.25;margin:10px 0 6px}.card p{color:var(--mut);font-size:14px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.feature{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}.feature .big{padding:28px;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end}.big h3{font:900 clamp(26px,4vw,44px)/1.05 var(--disp);text-transform:uppercase}
+.stack{display:grid;gap:14px}
+.meta{font:12px var(--mono);color:var(--mut);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{font:700 11px var(--mono);padding:2px 8px;border-radius:4px;border:1px solid currentColor;display:inline-block;color:var(--ac)}
+.ev{font:700 10px var(--mono);letter-spacing:.06em;padding:2px 7px;border-radius:3px;border:1px solid currentColor}
+.e-v{color:var(--ac)}.e-r{color:#5aa9ff}.e-c{color:var(--am)}.e-i{color:var(--vi)}.e-s{color:var(--mut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.p{padding:20px}
+.cap{font:11px/1.5 var(--mono);color:var(--mut);border-top:1px solid var(--line);margin-top:14px;padding-top:10px}.cap b{color:#b9cde0;font-weight:600}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:22px;color:var(--mut);font-size:14px;text-align:center}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font:13px var(--mono)}.kv dt{color:var(--mut)}.kv dd{margin:0}
+table{width:100%;border-collapse:collapse;font:12px var(--mono)}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:600}
+.tw{overflow-x:auto}.ok{color:var(--ac)}.bad{color:var(--rd)}.warn{color:var(--am)}
+.bars rect{fill:var(--ac)}.bars text,.axis{fill:var(--mut);font:10px var(--mono)}
+.sevr{display:grid;grid-template-columns:90px 1fr 40px;gap:10px;align-items:center;font:12px var(--mono);margin:8px 0}.trk{height:12px;background:var(--s2);border-radius:6px;overflow:hidden}.fil{height:100%;background:var(--bl)}
+.fil.CRITICAL{background:var(--rd)}.fil.HIGH{background:var(--am)}.fil.MEDIUM{background:var(--ac)}
+.cve{display:grid;gap:4px;padding:12px 0;border-bottom:1px solid var(--line)}.cve b{font:700 13px var(--mono);color:var(--ac)}.cve span{color:#b9cde0;font-size:14px}
+/* flujo de ataque (se conserva la interacción y animación) */
+.graph{padding:0;overflow:hidden}.gscroll{overflow-x:auto}.graph svg{display:block;width:100%;min-width:720px;height:auto}
+.gn{cursor:pointer;outline:none}.gn rect{fill:#0b1b2e;stroke:#24476b;transition:.2s}.gn:hover rect,.gn:focus-visible rect,.gn[aria-pressed=true] rect{stroke:var(--ac);fill:#0e2a44}
+.edge{stroke:#49D9FF44;stroke-width:1.5;fill:none}.edge.on{stroke:var(--ac);stroke-width:2.2;stroke-dasharray:6 6;animation:fl 1s linear infinite}@keyframes fl{to{stroke-dashoffset:-12}}
+.gd{padding:18px;border-top:1px solid var(--line);background:#081726;min-height:120px}svg text{font-family:var(--mono)}
+.ac{padding:22px}.ac h3{font:900 28px var(--disp);text-transform:uppercase;margin:6px 0}.actors{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.art{max-width:780px;margin:36px auto}.art h1{font:900 clamp(30px,5.5vw,54px)/1.05 var(--disp);text-transform:uppercase;margin:14px 0}.art h3{margin:28px 0 8px;font:12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ac)}.art p{color:#c3d4e4}
+footer{margin-top:60px;border-top:1px solid var(--line);padding:24px 0;color:var(--mut);font:12px/1.7 var(--mono)}
+@media(max-width:860px){.hero,.feature,.two{grid-template-columns:1fr}.hero{padding-top:28px}.sevr{grid-template-columns:76px 1fr 34px}}
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar"><a class="logo" href="#/">HACKERNEWS<i>.com.ar</i></a>
+<nav aria-label="Principal"><a href="#/" data-r="home">Portada</a><a href="#/inteligencia" data-r="intel">Inteligencia</a><a href="#/actores" data-r="actores">Actores</a><a href="#/estado" data-r="estado">Estado</a></nav></div></header>
+<main id="app" class="wrap" tabindex="-1" aria-live="polite"></main>
+<footer><div class="wrap">HACKERNEWS.COM.AR · Todo lo que se muestra proviene de ingestas registradas desde fuentes públicas; no hay telemetría operativa propia.<br>
+Niveles de evidencia: <span class="ev e-v">VERIFICADO</span> <span class="ev e-r">REPORTADO</span> <span class="ev e-c">ALEGACIÓN</span> <span class="ev e-i">INFERIDO</span> <span class="ev e-s">ANALÍTICO</span> · Mencionar a un grupo en una noticia no es una atribución.</div></footer>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const href=u=>/^https?:\/\//i.test(u||"")?esc(u):"#";
+const api=async p=>{try{const r=await fetch("/api/"+p);if(!r.ok)throw new Error("HTTP "+r.status);return await r.json()}catch(e){return{error:String(e.message||e)}}};
+const D=s=>{if(!s)return null;const x=String(s),d=new Date(/Z$|[+-]\d\d:?\d\d$/.test(x)?x:x.replace(" ","T")+"Z");return isNaN(d)?null:d};
+const fd=s=>{const d=D(s);return d?d.toLocaleString("es-AR",{dateStyle:"medium",timeStyle:"short"}):"—"};
+const fday=s=>{const d=D(s);return d?d.toLocaleDateString("es-AR",{dateStyle:"medium"}):"—"};
+const ago=s=>{const d=D(s);if(!d)return"—";const m=Math.round((Date.now()-d)/6e4);return m<1?"hace instantes":m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`};
+const EV={verified:["VERIFICADO","e-v"],reported:["REPORTADO","e-r"],claimed:["ALEGACIÓN","e-c"],inferred:["INFERIDO","e-i"],simulated:["ANALÍTICO","e-s"],analytic:["ANALÍTICO","e-s"]};
+const Ev=k=>{const e=EV[k]||EV.analytic;return `<span class="ev ${e[1]}">${e[0]}</span>`};
+const Empty=t=>`<div class="empty">${t}</div>`;
+const Err=e=>Empty(`No se pudieron cargar los datos (${esc(e)}). Se vuelve a intentar al recargar.`);
+const Cap=c=>`<div class="cap"><b>Qué mide:</b> ${esc(c.measures)}<br><b>Período:</b> ${esc(c.period)} · <b>Fuente:</b> ${esc(c.source)}<br><b>Última actualización:</b> ${c.updated_at?fd(c.updated_at)+" ("+ago(c.updated_at)+")":"sin datos todavía"}<br><b>Limitaciones:</b> ${esc(c.limitations)}</div>`;
+
+function BarChart(rows,label){if(!rows.length)return Empty("Sin registros en este período. Las series se llenan a medida que corren las ingestas.");
+ const w=560,h=150,m=Math.max(...rows.map(r=>r.n)),bw=w/rows.length;
+ return `<svg class="bars" viewBox="0 0 ${w} ${h+22}" width="100%" role="img" aria-label="${esc(label)}">${rows.map((r,i)=>{const bh=Math.max(2,r.n/m*(h-14));return `<rect x="${(i*bw+1).toFixed(1)}" y="${(h-bh).toFixed(1)}" width="${Math.max(2,bw-2).toFixed(1)}" height="${bh.toFixed(1)}" rx="2"><title>${esc(r.d)}: ${r.n}</title></rect>`}).join("")}
+ <text x="0" y="${h+14}" class="axis">${esc(rows[0].d)}</text><text x="${w}" y="${h+14}" text-anchor="end" class="axis">${esc(rows[rows.length-1].d)}</text><text x="${w}" y="10" text-anchor="end" class="axis">máx ${m}</text></svg>`}
+function SevBars(rows){if(!rows.length)return Empty("Sin CVE sincronizadas desde NVD en este período.");const m=Math.max(...rows.map(r=>r.n));
+ return rows.map(r=>`<div class="sevr"><span>${esc(r.d)}</span><div class="trk"><div class="fil ${esc(r.d)}" style="width:${(r.n/m*100).toFixed(0)}%"></div></div><span>${r.n}</span></div>`).join("")}
+
+/* ===== FLUJO DE ATAQUE (analítico, técnicas reales de ATT&CK) ===== */
+const TT={T1566:["Phishing","Initial Access"],T1078:["Valid Accounts","Defense Evasion / Persistence"],T1059:["Command and Scripting Interpreter","Execution"],T1003:["OS Credential Dumping","Credential Access"],T1021:["Remote Services","Lateral Movement"],T1041:["Exfiltration Over C2 Channel","Exfiltration"],T1486:["Data Encrypted for Impact","Impact"]};
+const GR={nodes:[
+ {id:"n1",x:70,y:60,l:"Acceso inicial",t:"T1566",d:"Un correo de suplantación puede entregar al atacante su primera credencial o ejecución."},
+ {id:"n2",x:70,y:190,l:"Cuentas válidas",t:"T1078",d:"Uso de credenciales robadas, que se confunde con actividad legítima."},
+ {id:"n3",x:300,y:60,l:"Ejecución",t:"T1059",d:"Comandos y scripts nativos del sistema para ejecutar acciones sin binarios evidentes."},
+ {id:"n4",x:300,y:190,l:"Credenciales",t:"T1003",d:"Obtención de más credenciales para ampliar el alcance dentro de la red."},
+ {id:"n5",x:530,y:125,l:"Mov. lateral",t:"T1021",d:"Acceso a otros equipos mediante servicios remotos legítimos."},
+ {id:"n6",x:760,y:60,l:"Exfiltración",t:"T1041",d:"Salida de datos por el mismo canal de comando y control."},
+ {id:"n7",x:760,y:190,l:"Impacto",t:"T1486",d:"Cifrado de sistemas para interrumpir la operación, típico del ransomware."}],
+ edges:[["n1","n3"],["n1","n2"],["n2","n4"],["n3","n5"],["n4","n5"],["n5","n6"],["n5","n7"]]};
+const Graph=sel=>{const N=Object.fromEntries(GR.nodes.map(n=>[n.id,n])),s=sel&&N[sel];
+ return `<div class="panel graph"><div class="gscroll"><svg viewBox="0 0 930 270" role="group" aria-label="Flujo de ataque analítico basado en técnicas ATT&CK">${GR.edges.map(e=>{const a=N[e[0]],b=N[e[1]],on=sel&&(e[0]===sel||e[1]===sel);return `<path class="edge ${on?"on":""}" d="M${a.x+130} ${a.y+30}C${a.x+190} ${a.y+30},${b.x-60} ${b.y+30},${b.x} ${b.y+30}"/>`}).join("")}
+ ${GR.nodes.map(n=>`<g class="gn" tabindex="0" role="button" aria-pressed="${n.id===sel}" data-n="${n.id}" transform="translate(${n.x},${n.y})"><rect width="130" height="60" rx="8"/><text x="12" y="26" fill="#D6E5F2" font-size="13" font-weight="700">${n.l}</text><text x="12" y="46" fill="#49D9FF" font-size="12">${n.t}</text></g>`).join("")}</svg></div>
+ <div class="gd" aria-live="polite">${s?`<span class="tag">${s.t}</span> <b>${esc(TT[s.t][0])}</b> <span class="mono" style="color:var(--mut)">· ${esc(TT[s.t][1])}</span> ${Ev("analytic")}<p style="margin:10px 0 6px;color:#c3d4e4">${esc(s.d)}</p><a class="mono" style="color:var(--ac)" target="_blank" rel="noopener noreferrer" href="https://attack.mitre.org/techniques/${s.t}/">Ficha oficial en MITRE ATT&amp;CK →</a>`:`<span class="mono" style="color:var(--mut)">Selecciona un nodo para ver su técnica ATT&amp;CK y resaltar las conexiones.</span>`}</div></div>
+ <p class="mono" style="font-size:12px;color:var(--mut)">${Ev("analytic")} Flujo analítico genérico que ilustra técnicas de ATT&amp;CK. No es la reconstrucción de un incidente real ni se atribuye a ningún grupo.</p>
+ <details style="margin-top:8px"><summary class="mono" style="cursor:pointer;color:var(--ac)">Alternativa en texto</summary><ol>${GR.nodes.map(n=>`<li>${esc(n.l)} (<a href="https://attack.mitre.org/techniques/${n.t}/" target="_blank" rel="noopener noreferrer">${n.t} ${esc(TT[n.t][0])}</a>): ${esc(n.d)}</li>`).join("")}</ol></details>`};
+
+/* ===== VISTAS ===== */
+const Tr=a=>a.translation_status==="done"?"Traducción automática":a.translation_status==="skipped"?"Original en español":"Pendiente de traducción";
+const Card=a=>`<a class="card" href="#/n/${a.id}"><div class="meta"><span class="tag">${esc((a.categories||"Seguridad general").split("|")[0])}</span><span>${esc(a.source)}</span></div><h3>${esc(a.title_es||a.original_title)}</h3><p>${esc((a.summary_es||a.original_excerpt||"").slice(0,140))}${(a.summary_es||a.original_excerpt||"").length>140?"…":""}</p><div class="meta"><span>${fday(a.published_at)}</span><span>${Tr(a)}</span></div></a>`;
+
+async function Home(){const[ar,st]=await Promise.all([api("articles?limit=13"),api("status")]);
+ const items=ar.items||[],t=st.totals;
+ const panel=st.error?Err(st.error):`<dl class="kv"><dt>Noticias</dt><dd>${t.articles}</dd><dt>Últimas 24 h</dt><dd>${t.articles_24h}</dd><dt>CVE en KEV</dt><dd>${t.kev}</dd><dt>Fuentes activas</dt><dd>${st.sources.filter(s=>s.enabled).length}</dd><dt>Última ejecución</dt><dd>${t.last_run?ago(t.last_run):"sin ejecuciones aún"}</dd></dl><p class="mono" style="font-size:11px;color:var(--mut);margin:12px 0 0">Valores calculados desde la base de datos. <a href="#/estado" style="color:var(--ac)">Ver estado completo →</a></p>`;
+ const news=ar.error?Err(ar.error):items.length?`<div class="feature"><a class="card panel big" href="#/n/${items[0].id}"><div class="meta"><span class="tag">${esc((items[0].categories||"Seguridad general").split("|")[0])}</span><span>${esc(items[0].source)}</span></div><h3>${esc(items[0].title_es||items[0].original_title)}</h3><p style="max-width:58ch;color:#b9cde0">${esc(items[0].summary_es||items[0].original_excerpt||"")}</p><div class="meta"><span>Publicado: ${fd(items[0].published_at)}</span><span>Ingerido: ${fd(items[0].ingested_at)}</span><span>${Tr(items[0])}</span></div></a><div class="stack">${items.slice(1,3).map(Card).join("")}</div></div><div class="grid" style="margin-top:14px">${items.slice(3).map(Card).join("")}</div>`:Empty("Todavía no hay noticias ingeridas. La primera ejecución automática las incorporará; no se muestra contenido de relleno.");
+ return `<section class="hero"><div><div class="kick">INTELIGENCIA DE CIBERAMENAZAS · EN ESPAÑOL</div><h1>Ciberinteligencia <em>sin ruido.</em></h1><p class="lead">HackerNews.com.ar reúne noticias, vulnerabilidades e investigaciones sobre amenazas con fuentes verificables, y deja claro qué está confirmado y qué no.</p><div class="cta"><a class="btn fill" href="#/inteligencia">VER INTELIGENCIA</a><a class="btn" href="#/estado">ESTADO DE LA INGESTA</a></div></div><div class="panel p"><b class="mono" style="color:var(--ac)">ESTADO DE LOS DATOS</b><div style="margin-top:12px">${panel}</div></div></section>
+ <h2 class="sec">Últimas noticias</h2><p>// ingeridas desde fuentes públicas · resumen en español por traducción automática del extracto</p>${news}`}
+
+async function Intel(){const[s,k]=await Promise.all([api("stats?days=30"),api("cves?kev=1&limit=8")]);
+ const S=s.series,per=`últimos ${s.window_days||30} días`;
+ const chart=(x,body)=>`<div class="panel p"><b>${esc(x.title)}</b> <span class="mono" style="color:var(--mut);font-size:11px">(${esc(x.unit)})</span><div style="margin-top:12px">${body}</div>${Cap({...x,period:per})}</div>`;
+ return `<h2 class="sec" style="margin-top:36px">Actividad documentada</h2><p>// registros persistidos de fuentes oficiales y medios · no es telemetría operativa</p>
+ ${s.error?Err(s.error):`<div class="two">${chart(S.articles_ingested,BarChart(S.articles_ingested.rows,S.articles_ingested.title))}${chart(S.kev_added,BarChart(S.kev_added.rows,S.kev_added.title))}</div><div style="margin-top:14px">${chart(S.cves_by_severity,SevBars(S.cves_by_severity.rows))}</div>`}
+ <h2 class="sec">Últimas vulnerabilidades explotadas (KEV)</h2><p>// catálogo de CISA · explotación confirmada por CISA, no por este sitio</p>
+ <div class="panel p">${k.error?Err(k.error):k.items.length?k.items.map(c=>`<div class="cve"><b>${esc(c.cve_id)} <span class="ev e-v">KEV</span>${c.severity?` <span class="tag" style="margin-left:6px">${esc(c.severity)}${c.cvss_score!=null?" "+c.cvss_score:""}</span>`:""}</b><span>${esc((c.description_en||"").slice(0,220))}</span><span class="mono" style="font-size:11px;color:var(--mut)">Incorporada a KEV: ${esc(c.kev_added_at||"—")} · <a style="color:var(--ac)" target="_blank" rel="noopener noreferrer" href="https://nvd.nist.gov/vuln/detail/${esc(c.cve_id)}">NVD →</a></span></div>`).join(""):Empty("Aún no se sincronizó el catálogo KEV.")}
+ <div class="cap"><b>Qué mide:</b> CVE listadas por CISA como explotadas. CVSS no equivale a riesgo real. <b>Fuente:</b> CISA KEV (JSON oficial).</div></div>
+ <h2 class="sec">Flujo de ataque</h2><p>// toca o selecciona un nodo · técnicas de MITRE ATT&amp;CK</p><div id="flow">${Graph()}</div>`}
+
+async function Actors(){const a=await api("actors");
+ return `<h2 class="sec" style="margin-top:36px">Grupos de amenazas</h2><p>// perfiles de la base de conocimiento MITRE ATT&amp;CK</p>
+ ${a.error?Err(a.error):`<p class="mono" style="font-size:12px;color:var(--mut)">${esc(a.note)}</p><div class="actors">${a.items.map(g=>`<div class="panel ac"><div class="meta"><span class="tag">${esc(g.attack_id)}</span>${Ev("verified")}</div><h3>${esc(g.name)}</h3><p style="color:#c3d4e4">${esc(g.description)}</p>
+ ${g.aliases.length?`<div class="mono" style="font-size:12px;color:var(--mut)"><b>Alias (MITRE):</b> ${esc(g.aliases.join(", "))}</div>`:""}
+ <div class="mono" style="font-size:12px;color:var(--mut);margin-top:10px">Técnicas asociadas: pendiente de sincronizar el dataset STIX de ATT&amp;CK.</div>
+ <div class="mono" style="font-size:12px;margin-top:10px">Menciones en noticias ingeridas: <b>${g.mentions}</b>${g.last_mention_ingested?" · última: "+ago(g.last_mention_ingested):""}</div>
+ <p style="margin:12px 0 0"><a class="mono" style="color:var(--ac);font-size:12px" target="_blank" rel="noopener noreferrer" href="${href(g.url)}">Ficha oficial en MITRE ATT&amp;CK →</a></p></div>`).join("")}</div>`}`}
+
+async function Estado(){const s=await api("status");if(s.error)return `<h2 class="sec" style="margin-top:36px">Estado de la ingesta</h2>${Err(s.error)}`;const t=s.totals,l=s.latest_article;
+ return `<h2 class="sec" style="margin-top:36px">Estado de la ingesta</h2><p>// derivado de ejecuciones registradas, no de valores fijos</p>
+ <div class="two"><div class="panel p"><dl class="kv"><dt>Última ejecución</dt><dd>${t.last_run?fd(t.last_run)+" ("+ago(t.last_run)+")":"ninguna todavía"}</dd><dt>Próxima (estimada)</dt><dd>${fd(s.next_run_estimate)}</dd><dt>Ejecuciones totales</dt><dd>${t.runs}</dd><dt>Noticias</dt><dd>${t.articles} (${t.articles_24h} en 24 h)</dd><dt>Pend. traducción</dt><dd>${t.pending_translation}</dd><dt>CVE / en KEV</dt><dd>${t.cves} / ${t.kev}</dd></dl><div class="cap">${esc(s.next_run_note)}</div></div>
+ <div class="panel p"><b class="mono" style="color:var(--ac)">ÚLTIMO ARTÍCULO INCORPORADO</b>${l?`<p style="margin:10px 0 4px"><a href="#/n/${l.id}">${esc(l.title_es||l.original_title)}</a></p><div class="meta"><span>${esc(l.source)}</span><span>ingerido ${ago(l.ingested_at)}</span></div>`:Empty("Todavía no hay artículos.")}</div></div>
+ <h2 class="sec">Fuentes</h2><div class="panel p tw"><table><thead><tr><th>Fuente</th><th>Tipo</th><th>Estado</th><th>Últ. éxito</th><th>Obtenidas</th><th>Nuevas</th><th>Duplic.</th><th>Error</th></tr></thead><tbody>${s.sources.map(x=>{const r=x.last_run;
+ const est=!x.enabled?'<span class="warn">deshabilitada</span>':!r?'<span class="warn">sin ejecutar</span>':r.status==="error"?'<span class="bad">error</span>':'<span class="ok">ok</span>';
+ return `<tr><td>${esc(x.name)}</td><td>${esc(x.adapter)}</td><td>${est}</td><td>${x.last_success_at?ago(x.last_success_at):"—"}</td><td>${r?r.fetched:"—"}</td><td>${r?r.inserted:"—"}</td><td>${r?r.duplicates:"—"}</td><td>${esc(x.last_error||(r&&r.error)||"")}</td></tr>`}).join("")}</tbody></table></div>`}
+
+async function Article(id){const a=await api("articles/"+id);if(a.error)return `<div class="panel p" style="margin-top:36px">No se encontró el artículo. <a style="color:var(--ac)" href="#/">Volver</a></div>`;
+ const cves=a.entities.filter(e=>e.entity_type==="cve"),act=a.entities.filter(e=>e.entity_type==="actor");
+ return `<article class="art"><a class="mono" style="color:var(--ac)" href="#/">← PORTADA</a><div class="meta" style="margin-top:18px">${a.categories.map(c=>`<span class="tag">${esc(c)}</span>`).join("")}</div><h1>${esc(a.title_es||a.original_title)}</h1>
+ <div class="meta"><span>Fuente: ${esc(a.source_name)}</span><span>Publicado: ${fd(a.published_at)}</span><span>Ingerido: ${fd(a.ingested_at)}</span></div>
+ <h3>Resumen</h3><p>${esc(a.summary_es||a.original_excerpt||"Sin extracto disponible.")}</p><p class="mono" style="font-size:12px;color:var(--mut)">${a.translation_status==="done"?"Traducción automática del extracto de la fuente ("+esc(a.translation_provider)+"). Puede contener imprecisiones.":a.translation_status==="skipped"?"Fuente en español.":"Pendiente de traducción; se muestra el texto original."}</p>
+ <h3>Fuente original</h3><p class="src"><a style="color:var(--ac)" target="_blank" rel="noopener noreferrer" href="${href(a.canonical_url)}">${esc(a.canonical_url)} →</a></p>
+ ${cves.length?`<h3>CVE mencionadas</h3><p>${cves.map(c=>`<a class="tag" target="_blank" rel="noopener noreferrer" href="https://nvd.nist.gov/vuln/detail/${esc(c.entity_id)}">${esc(c.entity_id)}</a> ${Ev(c.evidence_status)}`).join(" ")}</p>`:""}
+ ${act.length?`<h3>Grupos mencionados</h3><p>${act.map(c=>`<a class="tag" target="_blank" rel="noopener noreferrer" href="${href(c.actor_url)}">${esc(c.actor_name)} · ${esc(c.entity_id)}</a> ${Ev(c.evidence_status)}`).join(" ")}</p><p class="mono" style="font-size:12px;color:var(--mut)">Los nombres aparecen en el texto de la fuente. Esto no confirma una atribución.</p>`:""}</article>`}
+
+/* ===== ROUTER ===== */
+let seq=0;
+async function render(){const h=location.hash.slice(1)||"/",my=++seq;let k="home",fn=Home;
+ if(h.startsWith("/inteligencia")){k="intel";fn=Intel}else if(h.startsWith("/actores")){k="actores";fn=Actors}else if(h.startsWith("/estado")){k="estado";fn=Estado}
+ else if(h.startsWith("/n/")){k="art";fn=()=>Article(h.split("/")[2])}
+ document.querySelectorAll("nav a").forEach(a=>a.toggleAttribute("aria-current",a.dataset.r===k));
+ $("#app").innerHTML=`<p class="mono" style="color:var(--mut);margin-top:40px">Cargando…</p>`;
+ const html=await fn();if(my!==seq)return;$("#app").innerHTML=html;
+ document.title=({home:"Portada",intel:"Inteligencia",actores:"Actores",estado:"Estado",art:"Artículo"}[k])+" — HackerNews.com.ar";scrollTo(0,0)}
+const pick=id=>{const f=$("#flow");if(!f)return;const y=scrollY;f.innerHTML=Graph(id);scrollTo(0,y)};
+addEventListener("hashchange",render);
+document.addEventListener("click",e=>{const n=e.target.closest(".gn");if(n)pick(n.dataset.n)});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList?.contains("gn")){e.preventDefault();pick(e.target.dataset.n)}});
+render();
+</script>
+</body>
+</html>
