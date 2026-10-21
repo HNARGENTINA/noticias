@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "noticias",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "hn-argentina", "database_id": "9294fb4d-600f-48c1-9fc1-09b2e2a75301" }
+  ],
+  "kv_namespaces": [
+    { "binding": "CACHE", "id": "079db4d33dd343bfad6baeab8a30b8fe" }
+  ],
+  "triggers": { "crons": ["*/30 * * * *"] },
+  "observability": { "enabled": true }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "noticias",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test --experimental-strip-types test/feed.test.ts"
+  },
+  "devDependencies": { "wrangler": "^4" }
+}
