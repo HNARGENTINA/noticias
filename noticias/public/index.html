@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HackerNews.com.ar — Más allá de la noticia</title>
+<meta name="description" content="Más allá de la noticia: ciberseguridad, tecnología e inteligencia de amenazas en español, con fuentes verificables.">
+<meta property="og:site_name" content="HackerNews.com.ar"><meta property="og:title" content="HackerNews.com.ar — Más allá de la noticia"><meta property="og:description" content="Ciberseguridad, tecnología e inteligencia de amenazas en español, con fuentes verificables."><meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><div class="wrap bar"><a class="logo" href="#/">HACKERNEWS<i>.com.ar</i></a>
+<nav aria-label="Principal"><a href="#/" data-r="home">Portada</a><a href="#/inteligencia" data-r="intel">Inteligencia</a><a href="#/actores" data-r="actores">Actores</a><a href="#/estado" data-r="estado">Estado</a></nav></div></header>
+<main id="app" class="wrap" tabindex="-1" aria-live="polite"></main>
+<footer><div class="wrap">HACKERNEWS.COM.AR · Todo lo que se muestra proviene de ingestas registradas desde fuentes públicas; no hay telemetría operativa propia.<br>
+Niveles de evidencia: <span class="ev e-v">VERIFICADO</span> <span class="ev e-r">REPORTADO</span> <span class="ev e-c">ALEGACIÓN</span> <span class="ev e-i">INFERIDO</span> <span class="ev e-s">ANALÍTICO</span> · Mencionar a un grupo en una noticia no es una atribución.</div></footer>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const href=u=>/^https?:\/\//i.test(u||"")?esc(u):"#";
+const api=async p=>{try{const r=await fetch("/api/"+p);if(!r.ok)throw new Error("HTTP "+r.status);return await r.json()}catch(e){return{error:String(e.message||e)}}};
+const D=s=>{if(!s)return null;const x=String(s),d=new Date(/Z$|[+-]\d\d:?\d\d$/.test(x)?x:x.replace(" ","T")+"Z");return isNaN(d)?null:d};
+const fd=s=>{const d=D(s);return d?d.toLocaleString("es-AR",{dateStyle:"medium",timeStyle:"short"}):"—"};
+const fday=s=>{const d=D(s);return d?d.toLocaleDateString("es-AR",{dateStyle:"medium"}):"—"};
+const ago=s=>{const d=D(s);if(!d)return"—";const m=Math.round((Date.now()-d)/6e4);return m<1?"hace instantes":m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`};
+const EV={verified:["VERIFICADO","e-v"],reported:["REPORTADO","e-r"],claimed:["ALEGACIÓN","e-c"],inferred:["INFERIDO","e-i"],simulated:["ANALÍTICO","e-s"],analytic:["ANALÍTICO","e-s"]};
+const Ev=k=>{const e=EV[k]||EV.analytic;return `<span class="ev ${e[1]}">${e[0]}</span>`};
+const Empty=t=>`<div class="empty">${t}</div>`;
+const Err=e=>Empty(`No se pudieron cargar los datos (${esc(e)}). Se vuelve a intentar al recargar.`);
+const Cap=c=>`<div class="cap"><b>Qué mide:</b> ${esc(c.measures)}<br><b>Período:</b> ${esc(c.period)} · <b>Fuente:</b> ${esc(c.source)}<br><b>Última actualización:</b> ${c.updated_at?fd(c.updated_at)+" ("+ago(c.updated_at)+")":"sin datos todavía"}<br><b>Limitaciones:</b> ${esc(c.limitations)}</div>`;
+
+function BarChart(rows,label){if(!rows.length)return Empty("Sin registros en este período. Las series se llenan a medida que corren las ingestas.");
+ const w=560,h=150,m=Math.max(...rows.map(r=>r.n)),bw=w/rows.length;
+ return `<svg class="bars" viewBox="0 0 ${w} ${h+22}" width="100%" role="img" aria-label="${esc(label)}">${rows.map((r,i)=>{const bh=Math.max(2,r.n/m*(h-14));return `<rect x="${(i*bw+1).toFixed(1)}" y="${(h-bh).toFixed(1)}" width="${Math.max(2,bw-2).toFixed(1)}" height="${bh.toFixed(1)}" rx="2"><title>${esc(r.d)}: ${r.n}</title></rect>`}).join("")}
+ <text x="0" y="${h+14}" class="axis">${esc(rows[0].d)}</text><text x="${w}" y="${h+14}" text-anchor="end" class="axis">${esc(rows[rows.length-1].d)}</text><text x="${w}" y="10" text-anchor="end" class="axis">máx ${m}</text></svg>`}
+function SevBars(rows){if(!rows.length)return Empty("Sin CVE sincronizadas desde NVD en este período.");const m=Math.max(...rows.map(r=>r.n));
+ return rows.map(r=>`<div class="sevr"><span>${esc(r.d)}</span><div class="trk"><div class="fil ${esc(r.d)}" style="width:${(r.n/m*100).toFixed(0)}%"></div></div><span>${r.n}</span></div>`).join("")}
+
+/* ===== FLUJO DE ATAQUE (analítico, técnicas reales de ATT&CK) ===== */
+const TT={T1566:["Phishing","Initial Access"],T1078:["Valid Accounts","Defense Evasion / Persistence"],T1059:["Command and Scripting Interpreter","Execution"],T1003:["OS Credential Dumping","Credential Access"],T1021:["Remote Services","Lateral Movement"],T1041:["Exfiltration Over C2 Channel","Exfiltration"],T1486:["Data Encrypted for Impact","Impact"]};
+const GR={nodes:[
+ {id:"n1",x:70,y:60,l:"Acceso inicial",t:"T1566",d:"Un correo de suplantación puede entregar al atacante su primera credencial o ejecución."},
+ {id:"n2",x:70,y:190,l:"Cuentas válidas",t:"T1078",d:"Uso de credenciales robadas, que se confunde con actividad legítima."},
+ {id:"n3",x:300,y:60,l:"Ejecución",t:"T1059",d:"Comandos y scripts nativos del sistema para ejecutar acciones sin binarios evidentes."},
+ {id:"n4",x:300,y:190,l:"Credenciales",t:"T1003",d:"Obtención de más credenciales para ampliar el alcance dentro de la red."},
+ {id:"n5",x:530,y:125,l:"Mov. lateral",t:"T1021",d:"Acceso a otros equipos mediante servicios remotos legítimos."},
+ {id:"n6",x:760,y:60,l:"Exfiltración",t:"T1041",d:"Salida de datos por el mismo canal de comando y control."},
+ {id:"n7",x:760,y:190,l:"Impacto",t:"T1486",d:"Cifrado de sistemas para interrumpir la operación, típico del ransomware."}],
+ edges:[["n1","n3"],["n1","n2"],["n2","n4"],["n3","n5"],["n4","n5"],["n5","n6"],["n5","n7"]]};
+const Graph=sel=>{const N=Object.fromEntries(GR.nodes.map(n=>[n.id,n])),s=sel&&N[sel];
+ return `<div class="panel graph"><div class="gscroll"><svg viewBox="0 0 930 270" role="group" aria-label="Flujo de ataque analítico basado en técnicas ATT&CK">${GR.edges.map(e=>{const a=N[e[0]],b=N[e[1]],on=sel&&(e[0]===sel||e[1]===sel);return `<path class="edge ${on?"on":""}" d="M${a.x+130} ${a.y+30}C${a.x+190} ${a.y+30},${b.x-60} ${b.y+30},${b.x} ${b.y+30}"/>`}).join("")}
+ ${GR.nodes.map(n=>`<g class="gn" tabindex="0" role="button" aria-pressed="${n.id===sel}" data-n="${n.id}" transform="translate(${n.x},${n.y})"><rect width="130" height="60" rx="8"/><text x="12" y="26" fill="#D6E5F2" font-size="13" font-weight="700">${n.l}</text><text x="12" y="46" fill="#49D9FF" font-size="12">${n.t}</text></g>`).join("")}</svg></div>
+ <div class="gd" aria-live="polite">${s?`<span class="tag">${s.t}</span> <b>${esc(TT[s.t][0])}</b> <span class="mono" style="color:var(--mut)">· ${esc(TT[s.t][1])}</span> ${Ev("analytic")}<p style="margin:10px 0 6px;color:#c3d4e4">${esc(s.d)}</p><a class="mono" style="color:var(--ac)" target="_blank" rel="noopener noreferrer" href="https://attack.mitre.org/techniques/${s.t}/">Ficha oficial en MITRE ATT&amp;CK →</a>`:`<span class="mono" style="color:var(--mut)">Selecciona un nodo para ver su técnica ATT&amp;CK y resaltar las conexiones.</span>`}</div></div>
+ <p class="mono" style="font-size:12px;color:var(--mut)">${Ev("analytic")} Flujo analítico genérico que ilustra técnicas de ATT&amp;CK. No es la reconstrucción de un incidente real ni se atribuye a ningún grupo.</p>
+ <details style="margin-top:8px"><summary class="mono" style="cursor:pointer;color:var(--ac)">Alternativa en texto</summary><ol>${GR.nodes.map(n=>`<li>${esc(n.l)} (<a href="https://attack.mitre.org/techniques/${n.t}/" target="_blank" rel="noopener noreferrer">${n.t} ${esc(TT[n.t][0])}</a>): ${esc(n.d)}</li>`).join("")}</ol></details>`};
+
+/* ===== VISTAS ===== */
+const Tr=a=>a.translation_status==="done"?"Traducción automática":a.translation_status==="skipped"?"Original en español":"Pendiente de traducción";
+const Card=a=>`<a class="card" href="${esc(a.path)}"><div class="meta"><span class="tag">${esc((a.categories||"Seguridad general").split("|")[0])}</span><span>${esc(a.source)}</span></div><h3>${esc(a.title_es||a.original_title)}</h3><p>${esc((a.summary_es||a.original_excerpt||"").slice(0,140))}${(a.summary_es||a.original_excerpt||"").length>140?"…":""}</p><div class="meta"><span>${fday(a.published_at)}</span><span>${Tr(a)}</span></div></a>`;
+
+async function Home(h){const P=new URLSearchParams((h.split("?")[1])||""),q=P.get("q")||"",cat=P.get("cat")||"",filt=!!(q||cat);
+ const qs=new URLSearchParams({limit:"13"});if(q)qs.set("q",q);if(cat)qs.set("cat",cat);
+ const[ar,st,cs,ft]=await Promise.all([api("articles?"+qs),api("status"),api("categories"),filt?Promise.resolve({}):api("featured")]);
+ const t=st.totals,feat=ft&&ft.item,items=(ar.items||[]).filter(a=>!feat||a.id!==feat.id);
+ const panel=st.error?Err(st.error):`<dl class="kv"><dt>Noticias</dt><dd>${t.articles}</dd><dt>Últimas 24 h</dt><dd>${t.articles_24h}</dd><dt>CVE en KEV</dt><dd>${t.kev}</dd><dt>Fuentes activas</dt><dd>${st.sources.filter(s=>s.enabled).length}</dd><dt>Última ejecución</dt><dd>${t.last_run?ago(t.last_run):"sin ejecuciones aún"}</dd></dl><p class="mono" style="font-size:11px;color:var(--mut);margin:12px 0 0">Valores calculados desde la base de datos. <a href="#/estado" style="color:var(--ac)">Ver estado completo →</a></p>`;
+ const chips=`<a class="chip" ${!cat?'aria-current="true"':""} href="#/${q?"?q="+encodeURIComponent(q):""}">Todas</a>`+((cs.items||[]).map(c=>`<a class="chip" ${c.name===cat?'aria-current="true"':""} href="#/?cat=${encodeURIComponent(c.name)}${q?"&q="+encodeURIComponent(q):""}">${esc(c.name)} <small>${c.n}</small></a>`).join(""));
+ const big=a=>`<a class="card panel big" href="${esc(a.path)}"><div class="meta"><span class="tag">${esc((a.categories||"Seguridad general").split("|")[0])}</span><span>${esc(a.source)}</span></div><h3>${esc(a.title_es||a.original_title)}</h3><p style="max-width:58ch;color:#b9cde0">${esc(a.summary_es||a.original_excerpt||"")}</p><div class="meta"><span>Publicado: ${fd(a.published_at)}</span><span>Ingerido: ${fd(a.ingested_at)}</span><span>${Tr(a)}</span></div>${a.reasons?`<div class="meta" style="margin-top:8px"><span class="ev e-v">DESTACADA</span><span>${esc(a.reasons.join(" · ")||"más reciente")}</span></div>`:""}</a>`;
+ let news;
+ if(ar.error)news=Err(ar.error);
+ else if(!items.length&&!feat)news=Empty(filt?"Sin resultados para esta búsqueda.":"Todavía no hay noticias ingeridas. La primera ejecución automática las incorporará; no se muestra contenido de relleno.");
+ else news=(feat?`<div class="feature">${big(feat)}<div class="stack">${items.slice(0,2).map(Card).join("")}</div></div><div class="grid" style="margin-top:14px">${items.slice(2).map(Card).join("")}</div><p class="mono" style="font-size:11px;color:var(--mut)">Criterio de destacado: ${esc(ft.criteria)}</p>`:`<div class="grid">${items.map(Card).join("")}</div>`);
+ return `<section class="hero"><div><div class="kick">CIBERSEGURIDAD · TECNOLOGÍA · INTELIGENCIA DE AMENAZAS</div><h1>Más allá de la <em>noticia.</em></h1><p class="lead">HackerNews.com.ar reúne noticias, vulnerabilidades e investigaciones sobre amenazas en español, con fuentes verificables y sin mezclar lo confirmado con lo supuesto.</p><div class="cta"><a class="btn fill" href="#/inteligencia">VER INTELIGENCIA</a><a class="btn" href="#/estado">ESTADO DE LA INGESTA</a></div></div><div class="panel p"><b class="mono" style="color:var(--ac)">ESTADO DE LOS DATOS</b><div style="margin-top:12px">${panel}</div></div></section>
+ <h2 class="sec">${filt?"Resultados":"Últimas noticias"}</h2><p>// ingeridas desde fuentes públicas · resumen en español por traducción automática del extracto</p>
+ <div class="panel p" style="margin-bottom:18px"><div class="srch"><input id="q" type="search" placeholder="Buscar noticias, CVE, grupos…" aria-label="Buscar" maxlength="60" value="${esc(q)}"><button class="btn fill" id="go" type="button">BUSCAR</button></div><div class="chips" role="navigation" aria-label="Categorías">${chips}</div></div>${news}`}
+
+async function Intel(){const[s,k]=await Promise.all([api("stats?days=30"),api("cves?kev=1&limit=8")]);
+ const S=s.series,per=`últimos ${s.window_days||30} días`;
+ const chart=(x,body)=>`<div class="panel p"><b>${esc(x.title)}</b> <span class="mono" style="color:var(--mut);font-size:11px">(${esc(x.unit)})</span><div style="margin-top:12px">${body}</div>${Cap({...x,period:per})}</div>`;
+ return `<h2 class="sec" style="margin-top:36px">Actividad documentada</h2><p>// registros persistidos de fuentes oficiales y medios · no es telemetría operativa</p>
+ ${s.error?Err(s.error):`<div class="two">${chart(S.articles_ingested,BarChart(S.articles_ingested.rows,S.articles_ingested.title))}${chart(S.kev_added,BarChart(S.kev_added.rows,S.kev_added.title))}</div><div style="margin-top:14px">${chart(S.cves_by_severity,SevBars(S.cves_by_severity.rows))}</div>`}
+ <h2 class="sec">Últimas vulnerabilidades explotadas (KEV)</h2><p>// catálogo de CISA · explotación confirmada por CISA, no por este sitio</p>
+ <div class="panel p">${k.error?Err(k.error):k.items.length?k.items.map(c=>`<div class="cve"><b>${esc(c.cve_id)} <span class="ev e-v">KEV</span>${c.severity?` <span class="tag" style="margin-left:6px">${esc(c.severity)}${c.cvss_score!=null?" "+c.cvss_score:""}</span>`:""}</b><span>${esc((c.description_en||"").slice(0,220))}</span><span class="mono" style="font-size:11px;color:var(--mut)">Incorporada a KEV: ${esc(c.kev_added_at||"—")} · <a style="color:var(--ac)" target="_blank" rel="noopener noreferrer" href="https://nvd.nist.gov/vuln/detail/${esc(c.cve_id)}">NVD →</a></span></div>`).join(""):Empty("Aún no se sincronizó el catálogo KEV.")}
+ <div class="cap"><b>Qué mide:</b> CVE listadas por CISA como explotadas. CVSS no equivale a riesgo real. <b>Fuente:</b> CISA KEV (JSON oficial).</div></div>
+ <h2 class="sec">Flujo de ataque</h2><p>// toca o selecciona un nodo · técnicas de MITRE ATT&amp;CK</p><div id="flow">${Graph()}</div>`}
+
+async function Actors(){const a=await api("actors");
+ return `<h2 class="sec" style="margin-top:36px">Grupos de amenazas</h2><p>// perfiles de la base de conocimiento MITRE ATT&amp;CK</p>
+ ${a.error?Err(a.error):`<p class="mono" style="font-size:12px;color:var(--mut)">${esc(a.note)}</p><div class="actors">${a.items.map(g=>`<div class="panel ac"><div class="meta"><span class="tag">${esc(g.attack_id)}</span>${Ev("verified")}</div><h3>${esc(g.name)}</h3><p style="color:#c3d4e4">${esc(g.description)}</p>
+ ${g.aliases.length?`<div class="mono" style="font-size:12px;color:var(--mut)"><b>Alias (MITRE):</b> ${esc(g.aliases.join(", "))}</div>`:""}
+ <div class="mono" style="font-size:12px;color:var(--mut);margin-top:10px">Técnicas asociadas: pendiente de sincronizar el dataset STIX de ATT&amp;CK.</div>
+ <div class="mono" style="font-size:12px;margin-top:10px">Menciones en noticias ingeridas: <b>${g.mentions}</b>${g.last_mention_ingested?" · última: "+ago(g.last_mention_ingested):""}</div>
+ <p style="margin:12px 0 0"><a class="mono" style="color:var(--ac);font-size:12px" target="_blank" rel="noopener noreferrer" href="${href(g.url)}">Ficha oficial en MITRE ATT&amp;CK →</a></p></div>`).join("")}</div>`}`}
+
+async function Estado(){const s=await api("status");if(s.error)return `<h2 class="sec" style="margin-top:36px">Estado de la ingesta</h2>${Err(s.error)}`;const t=s.totals,l=s.latest_article;
+ return `<h2 class="sec" style="margin-top:36px">Estado de la ingesta</h2><p>// derivado de ejecuciones registradas, no de valores fijos</p>
+ <div class="two"><div class="panel p"><dl class="kv"><dt>Última ejecución</dt><dd>${t.last_run?fd(t.last_run)+" ("+ago(t.last_run)+")":"ninguna todavía"}</dd><dt>Próxima (estimada)</dt><dd>${fd(s.next_run_estimate)}</dd><dt>Ejecuciones totales</dt><dd>${t.runs}</dd><dt>Noticias</dt><dd>${t.articles} (${t.articles_24h} en 24 h)</dd><dt>Pend. traducción</dt><dd>${t.pending_translation}</dd><dt>CVE / en KEV</dt><dd>${t.cves} / ${t.kev}</dd></dl><div class="cap">${esc(s.next_run_note)}</div></div>
+ <div class="panel p"><b class="mono" style="color:var(--ac)">ÚLTIMO ARTÍCULO INCORPORADO</b>${l?`<p style="margin:10px 0 4px"><a href="${esc(l.path)}">${esc(l.title_es||l.original_title)}</a></p><div class="meta"><span>${esc(l.source)}</span><span>ingerido ${ago(l.ingested_at)}</span></div>`:Empty("Todavía no hay artículos.")}</div></div>
+ <h2 class="sec">Fuentes</h2><div class="panel p tw"><table><thead><tr><th>Fuente</th><th>Tipo</th><th>Estado</th><th>Últ. éxito</th><th>Obtenidas</th><th>Nuevas</th><th>Duplic.</th><th>Error</th></tr></thead><tbody>${s.sources.map(x=>{const r=x.last_run;
+ const est=!x.enabled?'<span class="warn">deshabilitada</span>':!r?'<span class="warn">sin ejecutar</span>':r.status==="error"?'<span class="bad">error</span>':'<span class="ok">ok</span>';
+ return `<tr><td>${esc(x.name)}</td><td>${esc(x.adapter)}</td><td>${est}</td><td>${x.last_success_at?ago(x.last_success_at):"—"}</td><td>${r?r.fetched:"—"}</td><td>${r?r.inserted:"—"}</td><td>${r?r.duplicates:"—"}</td><td>${esc(x.last_error||(r&&r.error)||"")}</td></tr>`}).join("")}</tbody></table></div>`}
+
+/* ===== ROUTER ===== */
+let seq=0;
+async function render(){const h=location.hash.slice(1)||"/",path=h.split("?")[0],my=++seq;let k="home",fn=()=>Home(h);
+ if(path.startsWith("/inteligencia")){k="intel";fn=Intel}else if(path.startsWith("/actores")){k="actores";fn=Actors}else if(path.startsWith("/estado")){k="estado";fn=Estado}
+ document.querySelectorAll("nav a").forEach(a=>a.toggleAttribute("aria-current",a.dataset.r===k));
+ $("#app").innerHTML=`<p class="mono" style="color:var(--mut);margin-top:40px">Cargando…</p>`;
+ const html=await fn();if(my!==seq)return;$("#app").innerHTML=html;
+ document.title=({home:"HackerNews.com.ar — Más allá de la noticia",intel:"Inteligencia — HackerNews.com.ar",actores:"Actores — HackerNews.com.ar",estado:"Estado — HackerNews.com.ar"}[k]);scrollTo(0,0)}
+const pick=id=>{const f=$("#flow");if(!f)return;const y=scrollY;f.innerHTML=Graph(id);scrollTo(0,y)};
+const go=()=>{const v=($("#q").value||"").trim(),c=new URLSearchParams((location.hash.split("?")[1])||"").get("cat"),P=new URLSearchParams();if(v)P.set("q",v);if(c)P.set("cat",c);location.hash="#/"+(P.toString()?"?"+P:"")};
+addEventListener("hashchange",render);
+document.addEventListener("click",e=>{const n=e.target.closest(".gn");if(n)pick(n.dataset.n);if(e.target.closest("#go"))go()});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList?.contains("gn")){e.preventDefault();pick(e.target.dataset.n)}if(e.key==="Enter"&&e.target.id==="q")go()});
+render();
+</script>
+</body>
+</html>
